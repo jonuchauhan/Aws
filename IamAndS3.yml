@@ -1,0 +1,53 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  This Yaml template is used to create 
+  One AWS user named David and also create
+  Two S3 bucket in AWS.
+
+Parameters:
+  DavidPassword:
+    NoEcho: true
+    Description: >
+      This paramter is used to provide password
+    Type: String
+    MinLength: 4
+    MaxLength: 20
+    AllowedPattern: ^[a-zA-Z0-9]*$
+
+Resources:
+  firstbucketjohn:
+    Type: AWS::S3::Bucket
+  secondbucketjohn:
+    Type: AWS::S3::Bucket
+  John:
+    Type: AWS::IAM::User
+    Properties:
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/IAMUserChangePassword
+      LoginProfile:
+        Password: !Ref DavidPassword
+        PasswordResetRequired: "true"
+
+  Policy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      MangedPolicyName: AllowAllS3ExceptCSecondBucket
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: 's3:*'
+            Resource: '*'
+          - Effect: Deny
+            Action: 's3:*'
+            Resource: [ !GetAtt secondbucketjohn.Arn, !Join ['', [!GetAtt secondbucketjohn.Arn, '/*']]]
+
+Outputs:
+  firstbucket:
+    Value: !Ref firstbucketjohn
+
+  SecondBucket:
+    Value: !Ref secondbucketjohn
+
+  JohnDavid:
+    Value: !Ref John
