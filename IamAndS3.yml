@@ -5,33 +5,33 @@ Description: >
   Two S3 bucket in AWS.
 
 Parameters:
-  DavidPassword:
+  davidpassword:
     NoEcho: true
     Description: >
       This paramter is used to provide password
     Type: String
     MinLength: 4
     MaxLength: 20
-    AllowedPattern: ^[a-zA-Z0-9]*$
+    AllowedPattern: ^[a-zA-Z0-9@]*$
 
 Resources:
   firstbucketjohn:
     Type: AWS::S3::Bucket
   secondbucketjohn:
     Type: AWS::S3::Bucket
-  John:
+  john:
     Type: AWS::IAM::User
     Properties:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/IAMUserChangePassword
       LoginProfile:
-        Password: !Ref DavidPassword
+        Password: !Ref davidpassword
         PasswordResetRequired: "true"
 
   Policy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
-      MangedPolicyName: AllowAllS3ExceptCSecondBucket
+      ManagedPolicyName: AllowAllS3ExceptSecondBucket
       PolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -46,8 +46,8 @@ Outputs:
   firstbucket:
     Value: !Ref firstbucketjohn
 
-  SecondBucket:
+  secondbucket:
     Value: !Ref secondbucketjohn
 
-  JohnDavid:
-    Value: !Ref John
+  johndavid:
+    Value: !Ref john
